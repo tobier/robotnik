@@ -1,5 +1,5 @@
 {
-  "name": "geomyidae",
+  "name": "robotnik",
   "version": "0.1.0",
   "description": "Friendly neighborhood Discord bot",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tobier/geomyidae.git"
+    "url": "git+https://github.com/tobier/robotnik.git"
   },
   "keywords": [
     "discord"
@@ -16,12 +16,14 @@
   "author": "Tobias Eriksson",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tobier/geomyidae/issues"
+    "url": "https://github.com/tobier/robotnik/issues"
   },
-  "homepage": "https://github.com/tobier/geomyidae#readme",
+  "homepage": "https://github.com/tobier/robotnik#readme",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "eslint": "^6.8.0",
     "log-timestamp": "^0.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
   }
 }
