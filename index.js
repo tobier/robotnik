@@ -1,3 +1,5 @@
+require('log-timestamp');
+
 const fs = require('fs');
 const Discord = require('discord.js');
 const { token, prefix } = require('./config.json');
@@ -13,10 +15,10 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-    console.log('Ready!');
+    console.log('Beep boop, bot has started!');
 });
 
-client.on('message', message => {
+client.on('message', async message => {
     if (message.author.bot || !message.content.startsWith(prefix)) return;
 
     const args = message.content.slice(prefix.length).split(/ +/);
