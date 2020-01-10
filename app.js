@@ -33,8 +33,8 @@ client.on('message', async message => {
     }
     catch (error) {
         console.error(error);
-        message.reply('there was an error trying to execute that command!');
+        message.reply('there was an error trying to execute that command!').catch(console.error);
     }
 });
 
-client.login(token);
+client.login(token).catch(console.error);
