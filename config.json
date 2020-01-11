@@ -1,4 +1,5 @@
 {
-    "token" : "not-a-real-token",
-    "prefix" : "!"
+    "token" : "<token-here>",
+    "prefix" : "!",
+    "streamChannel" : "streams"
 }

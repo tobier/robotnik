@@ -2,10 +2,11 @@ require('log-timestamp');
 
 const fs = require('fs');
 const Discord = require('discord.js');
-const { token, prefix } = require('./config.json');
+const { token, prefix, streamChannel } = require('./config.json');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+client.twitch = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -37,4 +38,25 @@ client.on('message', async message => {
     }
 });
 
-client.login(token).catch(console.error);
+client.on('presenceUpdate', (oldMember, newMember) => {
+    if (!newMember.presence.game) return;
+
+    const game = newMember.presence.game;
+    if (!game.streaming) return;
+
+    const channel = newMember.guild.channels.find('name', streamChannel);
+    if (channel) {
+        const author = newMember.nickname ? newMember.nickname : newMember.user.username;
+        const shill = new Discord.RichEmbed()
+            .setAuthor(author, `${newMember.user.avatarURL}`, game.url)
+            .setColor('#0099ff')
+            .setTitle(`${game.state}`)
+            .setDescription(`${game.details}`);
+        channel.send(shill);
+    }
+    else {
+        console.error(`Server ${newMember.guild.name} doesn't have a streaming channel '${streamChannel}'`);
+    }
+});
+
+client.login(token);
