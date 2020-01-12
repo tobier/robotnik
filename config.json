@@ -1,4 +1,5 @@
 {
     "prefix" : "!",
-    "streamChannel" : "streams"
+    "streamChannel" : "streams",
+    "stream_cooldown_seconds" : "300"
 }
