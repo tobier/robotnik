@@ -2,7 +2,8 @@ require('log-timestamp');
 
 const fs = require('fs');
 const Discord = require('discord.js');
-const { token, prefix, streamChannel } = require('./config.json');
+const token = process.env.DISCORD_TOKEN || 'not-a-valid-token';
+const { prefix, streamChannel } = require('./config.json');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -59,4 +60,4 @@ client.on('presenceUpdate', (oldMember, newMember) => {
     }
 });
 
-client.login(token);
+client.login(token).catch(console.error);

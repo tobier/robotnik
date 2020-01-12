@@ -1,5 +1,4 @@
 {
-    "token" : "<token-here>",
     "prefix" : "!",
     "streamChannel" : "streams"
 }
