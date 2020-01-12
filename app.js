@@ -60,11 +60,16 @@ client.on('presenceUpdate', (oldMember, newMember) => {
     if (channel) {
         const author = newMember.nickname ? newMember.nickname : newMember.user.username;
         const shill = new Discord.RichEmbed()
-            .setAuthor(author, `${newMember.user.avatarURL}`, game.url)
+            .setAuthor(author, newMember.user.avatarURL, game.url)
             .setColor('#0099ff')
-            .setTitle(`${game.state}`)
-            .setDescription(`${game.details}`);
-        channel.send(shill).then(() => {
+            .setTitle(game.details)
+            .setDescription(game.state)
+            .setFooter(game.url);
+
+        // TODO temporary, should be a random "going live" phrase
+        const message = `Looks like we got a live one here! ${game.url}`;
+
+        channel.send(message, shill).then(() => {
             // Set a cooldown on stream announcing so we don't flood the channel
             const expiration = Date.now() + (stream_cooldown_seconds * 1000);
             stream_cooldowns.set(newMember.id, expiration);
