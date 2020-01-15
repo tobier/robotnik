@@ -1,6 +1,10 @@
 require('log-timestamp');
 
 const fs = require('fs');
+const tmp = require('tmp');
+
+const request = require('request');
+
 const Discord = require('discord.js');
 const token = process.env.DISCORD_TOKEN || 'not-a-valid-token';
 const config = require('./config.json');
@@ -40,21 +44,30 @@ client.on('presenceUpdate', async (previous, current) => {
                 .replace('{width}', config.stream.thumbnail.width)
                 .replace('{height}', config.stream.thumbnail.height);
 
-            const shill = new Discord.RichEmbed()
-                .setAuthor(author, current.user.avatarURL, game.url)
-                .setColor('#0099ff')
-                .setTitle(game.details)
-                .setDescription(game.state)
-                .setThumbnail(artworkUrl)
-                .setFooter(game.url);
+            const tmpDir = tmp.dirSync();
+            const thumbnailFileUri = `${tmpDir.name}/thumbnail.jpg`;
 
-            // TODO temporary, should be a random "going live" phrase
-            const message = `Looks like we got a live one here! ${game.url}`;
+            request.head(artworkUrl, () => {
+                request(artworkUrl).pipe(fs.createWriteStream(thumbnailFileUri)).on('close', () => {
+                    const shill = new Discord.RichEmbed()
+                        .setAuthor(author, current.user.avatarURL, game.url)
+                        .setColor('#0099ff')
+                        .setTitle(game.details)
+                        .setDescription(game.state)
+                        .attachFile(thumbnailFileUri)
+                        .setThumbnail('attachment://thumbnail.jpg')
+                        .setFooter(game.url);
 
-            channel.send(message, shill).then(() => {
-                // Set a cooldown on stream announcing so we don't flood the channel
-                const expiration = Date.now() + (config.stream.cooldownSeconds * 1000);
-                client.cooldowns.set(current.id, expiration);
+                    // TODO temporary, should be a random "going live" phrase
+                    const message = `Looks like we got a live one here! ${game.url}`;
+
+                    channel.send(message, shill).then(() => {
+                        // Set a cooldown on stream announcing so we don't flood the channel
+                        const expiration = Date.now() + (config.stream.cooldownSeconds * 1000);
+                        client.cooldowns.set(current.id, expiration);
+                        tmpDir.removeCallback();
+                    });
+                });
             });
         }
         catch (error) {

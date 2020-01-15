@@ -21,8 +21,10 @@
   "homepage": "https://github.com/tobier/robotnik#readme",
   "dependencies": {
     "discord.js": "^11.5.1",
+    "twitch": "3.5.6",
     "log-timestamp": "^0.3.0",
-    "twitch": "3.5.6"
+    "tmp": "0.1.0",
+    "request": "2.88.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0"
