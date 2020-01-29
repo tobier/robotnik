@@ -3,14 +3,13 @@ require('log-timestamp');
 const fs = require('fs');
 const Discord = require('discord.js');
 const token = process.env.DISCORD_TOKEN || 'not-a-valid-token';
-const { prefix, streamChannel, stream_cooldown_seconds } = require('./config.json');
+const config = require('./config.json');
 
 const TwitchClient = require('twitch').default;
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-
-const stream_cooldowns = new Discord.Collection();
+client.cooldowns = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -25,9 +24,9 @@ client.once('ready', () => {
 });
 
 client.on('message', async message => {
-    if (message.author.bot || !message.content.startsWith(prefix)) return;
+    if (message.author.bot || !message.content.startsWith(config.command.prefix)) return;
 
-    const args = message.content.slice(prefix.length).split(/ +/);
+    const args = message.content.slice(config.command.prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     if (!client.commands.has(commandName)) return;
@@ -43,31 +42,33 @@ client.on('message', async message => {
     }
 });
 
-client.on('presenceUpdate', async (oldMember, newMember) => {
+client.on('presenceUpdate', async (previous, current) => {
     // Changing Spotify songs will trigger a prescence update, so check that previous state
     // wasn't also streaming
-    if(oldMember.presence.game && oldMember.presence.game.streaming) return;
+    if(previous.presence.game && previous.presence.game.streaming) return;
 
-    if (!newMember.presence.game) return;
+    if (!current.presence.game) return;
 
-    const game = newMember.presence.game;
+    const game = current.presence.game;
     if (!game.streaming) return;
 
     // Check cooldown on stream announcing so as not to flood channels
-    if (stream_cooldowns.has(newMember.id)) {
-        const expiration = stream_cooldowns.get(newMember.id);
+    if (client.cooldowns.has(current.id)) {
+        const expiration = client.cooldowns.get(current.id);
         if (Date.now() < expiration) return;
     }
 
-    const channel = newMember.guild.channels.find('name', streamChannel);
+    const channel = current.guild.channels.find('name', config.stream.channel);
     if (channel) {
         try {
-            const author = newMember.nickname ? newMember.nickname : newMember.user.username;
+            const author = current.nickname ? current.nickname : current.user.username;
             const twitchGame = await client.twitch.helix.games.getGameByName(game.state);
-            const artworkUrl = twitchGame.boxArtUrl.replace('{width}', 144).replace('{height}', 192);
+            const artworkUrl = twitchGame.boxArtUrl
+                .replace('{width}', config.stream.thumbnail.width)
+                .replace('{height}', config.stream.thumbnail.height);
 
             const shill = new Discord.RichEmbed()
-                .setAuthor(author, newMember.user.avatarURL, game.url)
+                .setAuthor(author, current.user.avatarURL, game.url)
                 .setColor('#0099ff')
                 .setTitle(game.details)
                 .setDescription(game.state)
@@ -79,8 +80,8 @@ client.on('presenceUpdate', async (oldMember, newMember) => {
 
             channel.send(message, shill).then(() => {
                 // Set a cooldown on stream announcing so we don't flood the channel
-                const expiration = Date.now() + (stream_cooldown_seconds * 1000);
-                stream_cooldowns.set(newMember.id, expiration);
+                const expiration = Date.now() + (config.stream.cooldownSeconds * 1000);
+                client.cooldowns.set(current.id, expiration);
             });
         }
         catch (error) {
@@ -88,7 +89,7 @@ client.on('presenceUpdate', async (oldMember, newMember) => {
         }
     }
     else {
-        console.error(`Server ${newMember.guild.name} doesn't have a streaming channel '${streamChannel}'`);
+        console.error(`Server ${current.guild.name} doesn't have a streaming channel '${config.stream.channel}'`);
     }
 });
 

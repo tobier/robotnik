@@ -1,5 +1,13 @@
 {
-    "prefix" : "!",
-    "streamChannel" : "streams",
-    "stream_cooldown_seconds" : "300"
+    "command" : {
+        "prefix" : "!"
+    },
+    "stream" : {
+        "channel" : "streams",
+        "cooldownSeconds" : 300,
+        "thumbnail" : {
+            "height" : 192,
+            "width" : 144
+        }
+    }
 }
