@@ -8,38 +8,11 @@ const config = require('./config.json');
 const TwitchClient = require('twitch').default;
 
 const client = new Discord.Client();
-client.commands = new Discord.Collection();
 client.cooldowns = new Discord.Collection();
-
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
-}
 
 client.once('ready', () => {
     client.twitch = TwitchClient.withClientCredentials(process.env.TWITCH_ID || 'not-a-valid-id', process.env.TWITCH_SECRET || 'not-a-valid-secret');
     console.log('Beep boop, bot has started!');
-});
-
-client.on('message', async message => {
-    if (message.author.bot || !message.content.startsWith(config.command.prefix)) return;
-
-    const args = message.content.slice(config.command.prefix.length).split(/ +/);
-    const commandName = args.shift().toLowerCase();
-
-    if (!client.commands.has(commandName)) return;
-
-    const command = client.commands.get(commandName);
-
-    try {
-        command.execute(message, args);
-    }
-    catch (error) {
-        console.error(error);
-        message.reply('there was an error trying to execute that command!').catch(console.error);
-    }
 });
 
 client.on('presenceUpdate', async (previous, current) => {
