@@ -2,9 +2,11 @@
   "name": "robotnik",
   "version": "0.1.0",
   "description": "Friendly neighborhood Discord bot",
+  "main": "dist/app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "repository": {
     "type": "git",
@@ -19,14 +21,23 @@
     "url": "https://github.com/tobier/robotnik/issues"
   },
   "homepage": "https://github.com/tobier/robotnik#readme",
-  "dependencies": {
-    "discord.js": "^11.5.1",
-    "twitch": "3.5.6",
-    "log-timestamp": "^0.3.0",
-    "tmp": "0.1.0",
-    "request": "2.88.0"
-  },
   "devDependencies": {
-    "eslint": "^6.8.0"
+    "@types/node": "^13.7.4",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-json": "^2.1.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.18.3",
+    "prettier": "^1.19.1",
+    "typescript": "^3.8.2"
+  },
+  "dependencies": {
+    "discord.js": "^11.5.1"
   }
 }
