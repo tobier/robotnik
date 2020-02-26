@@ -1,16 +1,38 @@
 module.exports = {
-  extends: ['airbnb', 'plugin:@typescript-eslint/recommended'],
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: [
+    "@typescript-eslint",
+    "prettier",
+  ],
+  extends: [
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint",
+  ],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: "./tsconfig.json"
+  },
+  env: {
+    node: true,
+  },
+  plugins: ['@typescript-eslint'],
   settings: {
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
+      '@typescript-eslint/parser': ['.ts'],
     },
   },
   rules: {
-    'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
-    'import/no-extraneous-dependencies': [2, { devDependencies: ['**/test.tsx', '**/test.ts'] }],
-    '@typescript-eslint/indent': [2, 2],
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.ts", "**/*.test.tsx"]}]
+    // Use 2 spaces indentation
+    '@typescript-eslint/indent': ["error", 2],
+    
+    // No errors on using devDependencies in tests
+    "import/no-extraneous-dependencies": [ 
+      "error", {
+        "devDependencies": [
+          "**/*.test.ts"
+        ]
+      }
+    ]
   },
-};
+}
