@@ -3,7 +3,7 @@ import { Result } from "@badrap/result";
 /**
  * Parses commands from a message string.
  */
-export default class CommandParser {
+export default class Parser {
     /**
      * Commands are prefixed with this operator.
      */
@@ -12,7 +12,7 @@ export default class CommandParser {
     /**
      * Trimmed, but otherwise unmodified, message
      */
-    readonly message: string;
+    private readonly message: string;
 
     constructor(message: string) {
         this.message = message.trim();
@@ -24,7 +24,7 @@ export default class CommandParser {
      * '<prefix>help someOtherCommand' returns 'help'
      */
     command(): Result<string, Error> {
-        if(this.message.startsWith(CommandParser.PREFIX)) {
+        if(this.message.startsWith(Parser.PREFIX)) {
             const tokens: string[] = this.tokenize();
             return Result.ok(tokens[0]);
         }
@@ -37,7 +37,7 @@ export default class CommandParser {
      * '<prefix>help someOtherCommand' returns 'someOtherCommand'
      */
     args(): string[] {
-        if(this.message.startsWith(CommandParser.PREFIX)) {
+        if(this.message.startsWith(Parser.PREFIX)) {
             const tokens: string[] = this.tokenize();
             return tokens.slice(1);
         }
@@ -45,6 +45,6 @@ export default class CommandParser {
     }
 
     private tokenize(): string[] {
-        return this.message.replace(CommandParser.PREFIX, "").match(/\S+/g);
+        return this.message.replace(Parser.PREFIX, "").match(/\S+/g);
     }
 }
