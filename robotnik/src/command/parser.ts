@@ -1,14 +1,9 @@
-/** 
- * User-executable bot command with optional arguments.
- */
-export default interface Command {
-    (...args: string[]);
-};
+import { Result } from "@badrap/result";
 
 /**
  * Parses commands from a message string.
  */
-export class CommandParser {
+export default class CommandParser {
     /**
      * Commands are prefixed with this operator.
      */
@@ -28,12 +23,12 @@ export class CommandParser {
      *
      * '<prefix>help someOtherCommand' returns 'help'
      */
-    command(): string {
+    command(): Result<string, Error> {
         if(this.message.startsWith(CommandParser.PREFIX)) {
             const tokens: string[] = this.tokenize();
-            return tokens[0];
+            return Result.ok(tokens[0]);
         }
-        return null;
+        return Result.err(new Error('String is not a command'));
     }
 
     /**

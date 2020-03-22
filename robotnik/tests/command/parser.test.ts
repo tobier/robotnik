@@ -1,14 +1,16 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import { CommandParser } from '../src/command';
+import CommandParser from '../../src/command/parser';
 
 describe('Command parsing from user message', () => {
     it('command without prefix return null and empty argument list', () => {
         const message = "does not have prefix";
         const parser = new CommandParser(message);
 
-        return expect(parser.command()).to.be.null
+        const result = parser.command();
+
+        return expect(result.isErr).to.be.true
             && expect(parser.args()).to.be.empty; 
     });
 
@@ -16,7 +18,7 @@ describe('Command parsing from user message', () => {
         const message = `${CommandParser.PREFIX}myCommand`;
         const parser = new CommandParser(message);
 
-        return expect(parser.command()).to.be.equal('myCommand')
+        return expect(parser.command().unwrap()).to.be.equal('myCommand')
             && expect(parser.args()).to.be.empty;
     });
 
@@ -24,7 +26,7 @@ describe('Command parsing from user message', () => {
         const message = `  ${CommandParser.PREFIX}myCommand   `;
         const parser = new CommandParser(message);
 
-        return expect(parser.command()).to.be.equal('myCommand')
+        return expect(parser.command().unwrap()).to.be.equal('myCommand')
             && expect(parser.args()).to.be.empty;
     });
 
@@ -32,7 +34,7 @@ describe('Command parsing from user message', () => {
         const message = `${CommandParser.PREFIX}myCommand one two`;
         const parser = new CommandParser(message);
 
-        return expect(parser.command()).to.be.equal('myCommand')
+        return expect(parser.command().unwrap()).to.be.equal('myCommand')
             && expect(parser.args()).to.eql(['one', 'two']);
     });
 
@@ -40,7 +42,7 @@ describe('Command parsing from user message', () => {
         const message = `${CommandParser.PREFIX}myCommand   one   two three`;
         const parser = new CommandParser(message);
 
-        return expect(parser.command()).to.be.equal('myCommand')
+        return expect(parser.command().unwrap()).to.be.equal('myCommand')
             && expect(parser.args()).to.eql(['one', 'two', 'three']);
     });
 });

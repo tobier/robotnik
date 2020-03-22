@@ -23,8 +23,8 @@ module.exports = {
     },
   },
   rules: {
-    // Use 2 spaces indentation
-    '@typescript-eslint/indent': ["error", 2],
+    // Use 4 spaces indentation
+    '@typescript-eslint/indent': ["error", 4],
     
     // No errors on using devDependencies in tests
     "import/no-extraneous-dependencies": [ 

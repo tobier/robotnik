@@ -5,12 +5,13 @@
       "esModuleInterop": true,
       "target": "es6",
       "moduleResolution": "node",
-      "sourceMap": true,
-      "outDir": "dist"
+      "sourceMap": false,
+      "outDir": "dist",
+      "baseUrl": "src/"
     },
+    "exclude": [
+      "node_modules",
+      "dist"
+    ],
     "lib": ["es2015"],
-    "baseUrl" : "./src",
-    "paths" : {
-      "@bot/*": ["bot/*"],
-    }
   }
