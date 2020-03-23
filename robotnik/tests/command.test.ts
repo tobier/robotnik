@@ -22,9 +22,12 @@ import 'mocha';
 
 import { use, expect } from 'chai';
 import ChaiAsPromised from 'chai-as-promised';
-
 import { spy } from 'sinon';
 import * as sinonChai from 'sinon-chai';
+
+import { mock } from 'ts-mockito';
+
+import { Message } from 'discord.js';
 
 import { Broker, Parser } from '../src/command';
 
@@ -34,16 +37,23 @@ use(sinonChai.default);
 describe('Command broker', () => {
     it('unregistered command is rejected', () => {
         const broker = new Broker();
-        return expect(broker.run("unknown")).to.eventually.be.rejected;
+
+        const message = mock(Message);
+        message.content = `${Parser.PREFIX}unknown`;
+
+        return expect(broker.onMessage(message)).to.eventually.be.rejected;
     });
 
     it('registered command is properly forwared with arguments', () => {
         const broker = new Broker();
-        const command = spy();
+        const handler = spy();
 
-        broker.register('register', command);
-        broker.run('register', 'my', 'nickname');
-        return expect(command).to.have.been.calledWith('my', 'nickname');
+        const message = mock(Message);
+        message.content = `${Parser.PREFIX}register my nickname`;
+
+        broker.register('register', handler);
+        broker.onMessage(message);
+        return expect(handler).to.have.been.calledWith('my', 'nickname');
     });
 });
 

@@ -18,7 +18,10 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+import { Message } from 'discord.js';
+
 import { Command } from './command.function';
+import { Parser } from './command.parser';
 
 /**
  * Brokers named commands.
@@ -40,11 +43,20 @@ export class Broker {
     }
 
     /**
-     * Run a command registered in this broker.
-     * @param name the name of the command
-     * @param args the (optional) arguments
+     * Handle a message from a user.
+     * @param message the message to handle
      */
-    run(name: string, ...args: string[]): Promise<void> {
+    async onMessage(message: Message): Promise<void> {
+        const parser = new Parser(message.content);
+        const command = parser.command();
+        if(command.isOk) {
+            return this.run(command.value, ...parser.args());
+        }
+
+        return Promise.reject(new Error(`Failed to execute command based on ${message.content}`));
+    }
+
+    private run(name: string, ...args: string[]): Promise<void> {
         if(this.commands.has(name)) {
             const command = this.commands.get(name);
             return command(...args);
