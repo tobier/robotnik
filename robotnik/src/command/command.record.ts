@@ -18,10 +18,31 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+import { Message } from 'discord.js';
 
 /** 
  * User-executable bot command with optional arguments.
  */
 export interface Command {
-    (...args: string[]): Promise<void>;
+    /**
+     * Human-readable description of this command.
+     */
+    description: string;
+
+    /**
+     * Optional help description for this command.
+     */
+    help?: string;
+
+    /**
+     * The handler for this command.
+     */
+    handler: Handler;
+}
+
+/** 
+ * Handler for commands
+ */
+export interface Handler {
+    (message: Message, ...args: string[]): Promise<void>;
 };

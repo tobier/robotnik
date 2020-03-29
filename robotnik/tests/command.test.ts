@@ -47,13 +47,27 @@ describe('Command broker', () => {
     it('registered command is properly forwared with arguments', () => {
         const broker = new Broker();
         const handler = spy();
+        const description = 'the description';
+        const command = { handler, description };
 
         const message = mock(Message);
         message.content = `${Parser.PREFIX}register my nickname`;
 
-        broker.register('register', handler);
+        broker.register('register', command);
         broker.onMessage(message);
-        return expect(handler).to.have.been.calledWith('my', 'nickname');
+        return expect(handler).to.have.been.calledWith(message, 'my', 'nickname');
+    });
+
+    it('double register command gives error', () => {
+        const broker = new Broker();
+        const handler = spy();
+        const description = 'the description';
+        const command = { handler, description };
+
+        const firstResult = broker.register('duplicated', command);
+        const secondResult = broker.register('duplicated', command);
+
+        return expect(firstResult.isOk).to.be.true && expect(secondResult.isErr).to.be.true;
     });
 });
 

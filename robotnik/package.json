@@ -2,10 +2,10 @@
   "name": "robotnik",
   "version": "0.1.0",
   "description": "Friendly neighborhood Discord bot",
-  "main": "dist/app.js",
+  "main": "dist/src/app.js",
   "scripts": {
-    "build": "tsc --traceResolution",
-    "start": "tsc && node dist/app.js",
+    "build": "tsc",
+    "start": "tsc && node dist/src/app.js",
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"

@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 /**
  * Copyright (c) 2020 Tobias Eriksson
  *
@@ -19,6 +18,6 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-export { Command } from './command.function';
+export { Command, Handler } from './command.record';
 export { Parser } from './command.parser';
 export { Broker } from './command.broker';

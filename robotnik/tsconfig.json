@@ -7,10 +7,6 @@
       "moduleResolution": "node",
       "sourceMap": false,
       "outDir": "dist",
-      "baseUrl": "./src",
-      "paths": {
-        "@modules/*": ["*"],
-      }
     },
     "exclude": [
       "node_modules",
