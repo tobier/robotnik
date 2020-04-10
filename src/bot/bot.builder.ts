@@ -19,5 +19,44 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-export { Bot } from './bot';
-export { Builder } from './bot.builder';
+import { Client } from 'discord.js';
+
+import { Bot } from './bot';
+import { BuildableBot } from './bot.buildable';
+
+import { Command } from '../command/command.record';
+import { Broker } from '../command/command.broker';
+
+/**
+ * Configure a build a Bot instance.
+ */
+export class Builder {
+    
+    private readonly commands: Map<string, Command>;
+
+    constructor() {
+        this.commands = new Map<string, Command>();
+    }
+
+    /**
+     * Add a command to the bot.
+     * @param name the name of the command as typed by a user
+     * @param command the actual command
+     */
+    withCommand(name: string, command: Command): Builder {
+        this.commands.set(name, command);
+        return this;
+    }
+
+    /**
+     * Build a new Bot instance.
+     */
+    build(): Bot {
+        const broker = new Broker();
+        this.commands.forEach((command, name) => {
+            broker.register(name, command);
+        });
+        
+        return new BuildableBot(new Client(), broker);
+    }
+}

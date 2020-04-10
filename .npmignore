@@ -1,0 +1,8 @@
+src
+tests
+.eslintrc.js
+.travis.yml
+
+.nyc_output/
+coverage/
+yarn-error.log

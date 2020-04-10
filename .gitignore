@@ -112,3 +112,6 @@ temp/
 
 # Visual Studio Code
 .vscode/
+
+# Output files
+out/

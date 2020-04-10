@@ -18,6 +18,8 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-export { Command, Handler } from './command.record';
-export { Parser } from './command.parser';
-export { Broker } from './command.broker';
+
+export { Bot } from './bot/bot';
+export { Builder } from './bot/bot.builder';
+
+export { Command, Handler } from './command/command.record';

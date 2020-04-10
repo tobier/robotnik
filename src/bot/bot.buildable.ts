@@ -22,40 +22,31 @@
 import { Client } from 'discord.js';
 
 import { Bot } from './bot';
-import { BuildableBot } from './bot.buildable';
-
-import { Command, Broker } from '../command';
+import { Broker } from '../command/command.broker';
 
 /**
- * Configure a build a Bot instance.
+ * Implements a bot that is buildable by a builder.
  */
-export class Builder {
-    
-    private readonly commands: Map<string, Command>;
+/* eslint-disable no-console */
+export class BuildableBot implements Bot {
 
-    constructor() {
-        this.commands = new Map<string, Command>();
+    private readonly broker: Broker;
+
+    private readonly client: Client;
+
+    constructor(client: Client, broker: Broker) {
+        this.client = client;
+        this.broker = broker;
     }
 
-    /**
-     * Add a command to the bot.
-     * @param name the name of the command as typed by a user
-     * @param command the actual command
-     */
-    withCommand(name: string, command: Command): Builder {
-        this.commands.set(name, command);
-        return this;
-    }
-
-    /**
-     * Build a new Bot instance.
-     */
-    build(): Bot {
-        const broker = new Broker();
-        this.commands.forEach((command, name) => {
-            broker.register(name, command);
+    login(secret: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.client.login(secret).then(() => {
+                this.client.on('message', message => {
+                    this.broker.onMessage(message).catch(console.error);
+                })
+                console.debug(`Bot is running as ${this.client.user.username}`);
+            }).catch(reject);
         });
-        
-        return new BuildableBot(new Client(), broker);
     }
-}
+};

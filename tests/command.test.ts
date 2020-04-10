@@ -29,7 +29,8 @@ import { mock } from 'ts-mockito';
 
 import { Message } from 'discord.js';
 
-import { Broker, Parser } from '../src/command';
+import { Broker } from '../src/command/command.broker';
+import { Parser } from '../src/command/command.parser';
 
 use(ChaiAsPromised);
 use(sinonChai.default);
