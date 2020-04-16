@@ -9,6 +9,7 @@
     "build": "tsc",
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" yarn test",
+    "coveralls" : "nyc yarn test && nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prepare": "tsc"
   },
@@ -57,6 +58,7 @@
   },
   "dependencies": {
     "@badrap/result": "^0.2.6",
+    "coveralls": "^3.0.11",
     "discord.js": "^11.5.1",
     "twitch": "^4.0.2"
   }
