@@ -54,7 +54,7 @@ export class Broker {
                 }
 
                 return new Promise((resolve, reject) => {
-                    message.author.send(data).then(() => resolve).catch(reject);
+                    message.author.send(data).then( () => resolve() ).catch(reject);
                 });
             }
         });

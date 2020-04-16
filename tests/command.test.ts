@@ -22,12 +22,12 @@ import 'mocha';
 
 import { use, expect } from 'chai';
 import ChaiAsPromised from 'chai-as-promised';
-import { spy } from 'sinon';
+import { spy, stub } from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
 import { mock } from 'ts-mockito';
 
-import { Message } from 'discord.js';
+import { Message, User } from 'discord.js';
 
 import { Broker } from '../src/command/command.broker';
 import { Parser } from '../src/command/command.parser';
@@ -43,6 +43,15 @@ describe('Command broker', () => {
         message.content = `${Parser.PREFIX}unknown`;
 
         return expect(broker.onMessage(message)).to.eventually.be.rejected;
+    });
+
+    it('regular message is ignored and eventually fulfilled', () => {
+        const broker = new Broker();
+
+        const message = mock(Message);
+        message.content = `just a message`;
+
+        return expect(broker.onMessage(message)).to.eventually.be.fulfilled;
     });
 
     it('registered command is properly forwared with arguments', () => {
@@ -69,6 +78,22 @@ describe('Command broker', () => {
         const secondResult = broker.register('duplicated', command);
 
         return expect(firstResult.isOk).to.be.true && expect(secondResult.isErr).to.be.true;
+    });
+
+    it('running command as bot is not executed', () => {
+        const broker = new Broker();
+        const handler = spy();
+        const description = 'the description';
+        const command = { handler, description };
+
+        const message = mock(Message);
+        message.content = `${Parser.PREFIX}register my nickname`;
+        message.author =  mock(User);
+        message.author.bot = true; // This user is a bot!
+
+        broker.register('register', command);
+        broker.onMessage(message);
+        return expect(handler).to.have.callCount(0);
     });
 });
 
@@ -113,5 +138,52 @@ describe('Command parsing from user message', () => {
 
         return expect(parser.command().unwrap()).to.be.equal('myCommand')
             && expect(parser.args()).to.eql(['one', 'two', 'three']);
+    });
+});
+
+describe('Built-in "help" command', () => {
+    it('built in help withour arguments command answers the author', () => {
+        const broker = new Broker();
+
+        const message = mock(Message);
+        message.content = `${Parser.PREFIX}help`;
+        message.author =  mock(User);
+        message.author.bot = false;
+        message.author.send = spy((message: any) => {
+            return Promise.resolve(message);
+        });
+
+        broker.onMessage(message);
+        return expect(message.author.send).to.have.been.calledOnce;
+    });
+
+    it('built in help with known command command answers the author', () => {
+        const broker = new Broker();
+
+        const message = mock(Message);
+        message.content = `${Parser.PREFIX}help help`;
+        message.author =  mock(User);
+        message.author.bot = false;
+        message.author.send = spy((message: any) => {
+            return Promise.resolve(message);
+        });
+
+        broker.onMessage(message);
+        return expect(message.author.send).to.have.been.calledOnce;
+    });
+
+    it('built in help command with unknown command still answers the author', () => {
+        const broker = new Broker();
+
+        const message = mock(Message);
+        message.content = `${Parser.PREFIX}help unknown`;
+        message.author =  mock(User);
+        message.author.bot = false;
+        message.author.send = spy((message: any) => {
+            return Promise.resolve(message);
+        });
+
+        broker.onMessage(message);
+        return expect(message.author.send).to.have.been.calledOnce;
     });
 });
